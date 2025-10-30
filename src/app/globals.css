@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
+/* Global fallback font */
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ===== Design tokens (Light) ===== */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -45,11 +46,14 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* custom gradient token */
     --creative-ai-gradient: linear-gradient(180deg, #f55c7a 0%, #f6bc66 100%);
+  }
 }
 
-  }
-
+/* ===== Design tokens (Dark overrides) ===== */
+@layer base {
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -86,8 +90,9 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+}
 
-
+/* Gradient text helper */
 .text-vivid {
   background: linear-gradient(180deg, #f55c7a 0%, #f6bc66 100%);
   background-clip: text;
@@ -95,7 +100,12 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Background gradient helper (pakai token) */
+.creative-ai-gradient {
+  background: var(--creative-ai-gradient);
+}
 
+/* Baseline defaults yang memakai token via Tailwind */
 @layer base {
   * {
     @apply border-border;
