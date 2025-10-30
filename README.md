@@ -88,13 +88,13 @@ touch src/provider/theme-provider.tsx
 
 ```jsx
 <ThemeProvider
-attribute={'class'}
-defaultTheme="dark"
-enableSystem
-disableTransitionOnChange
+  attribute={'class'}
+  defaultTheme="dark"
+  enableSystem
+  disableTransitionOnChange
 >
-    {children}
-    <Toaster position="top-right" richColors />
+  {children}
+  <Toaster position="top-right" richColors />
 </ThemeProvider>
 ```
 
@@ -117,10 +117,89 @@ then add the middleware.ts for the middle provider, the main function is to prot
 12. wire up the clerk by wrapping entire app layout into clerk provider component
 
 ```jsx
-    <ClerkProvider
-    appearance={{
-      theme: dark,
-    }}>
-    ...
-    </ClerkProvider>
+<ClerkProvider
+  appearance={{
+    theme: dark,
+  }}
+>
+  ...
+</ClerkProvider>
 ```
+
+13. directing clerk auth into our own route which is sign-in and sign-up folder
+
+```jsx
+const isPublicRoute = createRouteMatcher([
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/sso-callback(.*)',
+])
+
+export default clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
+    await auth.protect()
+  }
+})
+```
+
+14. adding simple layout for sign in / sign up page in (auth)/layout.tsx
+
+15. adding prisma into our system for orm (object relational mapper), so we can talk to database with jvascript
+
+```bash
+bun add @prisma/client@5.22.0
+```
+
+16. create prima configuration in lib/prisma.ts
+
+```jsx
+import { PrismaClient } from '@prisma/client';
+
+declare global {
+    var prisma: PrismaClient | undefined;
+}
+
+export const client = global.prisma || new PrismaClient();
+
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = client;
+```
+
+basically what we want to do is to configure out prisma to have one connection only while development.
+
+17. initialize prisma
+
+```bash
+bunx prisma init
+```
+
+this will genereate prisma/schema.prisma, what thats do is to configure the database provider, database url, model of our table and else.
+
+18. Create neon database project, add the database url into env. end then generate prisma database initiator
+
+```bash
+bunx prisma generate
+```
+
+akan ada hasil generated folder di src, yang tujuannya adalah ya bikinin script mapper itu, yang bisa kita pake untuk panggil database atau lain lain hanya dengan bahasa javascirpt
+
+19. singkronisasi prisma ke database tanpa migration
+
+```bash
+bunx prisma db push
+```
+
+disini prisma bakal baca schema.prisma, terus connect ke database dengan url dari env, terus buat table sesuai model di databae.
+
+20. update database schema
+
+- <img src="public/image.png" width='200'>
+
+kira kira bentuknya kaya gitu lah ya. intinya kita punya dua table utama, user dan project, dan terhubung dengan dua jenis relasi, one to many by use <-> owned projects dan many to many by user <-> purchased project.
+
+logikanya adalah user sebagai akun utama bisa buat project sendiri dan juga beli project dari orang lain, di lain sisi project adalah object presentasi itu punya pemilih tunggal, tapi bisa jga dimiliki oleh banyak pembeli.
+
+setelah itu tinggal bunx prisma generate dan bunx prisma db push, dan we left with two database created in neon db dengan segala relasi dan logic yang kita set.
+
+21. kita balik lagi ke sign in process. disini kita bakal nambah callback.
+
+fungsi callback disini bisa dibilang kaya satpam, jadi pas user mau login di clerk, pas udah login, bakal ada route callback, which is disini itu tuh kaya checkpoitn aja, intinya, oke user udah login, sekarang kita mau mututsin si user ini udah baru daftar atau udah pernah daftar sebelumnya. kalo belum maka di daftar dulu datanta di database. abis itu baru dibawa ke dashboard. nah kalo si user itu loginnya ga valid maka dia bakal di suruh login ulang.
