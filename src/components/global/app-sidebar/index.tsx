@@ -27,7 +27,7 @@ const AppSidebar = ({ recentProjects, user, ...props }: AppSidebarProps) => {
       className="max-w-[212px] bg-background-90"
       {...props}
     >
-      <SidebarHeader className="pt-6 px-3 pb-0">
+      <SidebarHeader className="pt-6 px-2 pb-0">
         <SidebarMenuButton
           size={'lg'}
           className="data-[state-open]:text-sidebar-accent-foreground"
@@ -46,7 +46,7 @@ const AppSidebar = ({ recentProjects, user, ...props }: AppSidebarProps) => {
           </span>
         </SidebarMenuButton>
       </SidebarHeader>
-      <SidebarContent className="px-3 mt-10 gap-y-6">
+      <SidebarContent className="px-2 mt-10 gap-y-6">
         <NavMain items={data.navMain} />
         <RecentOpened recentProjects={recentProjects} />
       </SidebarContent>
