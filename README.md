@@ -203,3 +203,11 @@ setelah itu tinggal bunx prisma generate dan bunx prisma db push, dan we left wi
 21. kita balik lagi ke sign in process. disini kita bakal nambah callback.
 
 fungsi callback disini bisa dibilang kaya satpam, jadi pas user mau login di clerk, pas udah login, bakal ada route callback, which is disini itu tuh kaya checkpoitn aja, intinya, oke user udah login, sekarang kita mau mututsin si user ini udah baru daftar atau udah pernah daftar sebelumnya. kalo belum maka di daftar dulu datanta di database. abis itu baru dibawa ke dashboard. nah kalo si user itu loginnya ga valid maka dia bakal di suruh login ulang.
+
+22. now we focus on building our dashboard ui,
+
+first the page. the page will get all project by taking allproject function to retrieve all user project. maked or buyed
+
+23. sidebar
+
+we will create layout in protected folder that load layout component in pages/layout
