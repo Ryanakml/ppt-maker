@@ -42,3 +42,44 @@ export const getAllProjects = async () => {
     }
   }
 }
+
+export const getRecentProjects = async () => {
+  try {
+    const checkUser = await onAuthenticateUser()
+    if (checkUser.status !== 200 || !checkUser.user) {
+      return {
+        status: 403,
+        message: 'User not authenticated',
+      }
+    }
+
+    const recentProjects = await client.project.findMany({
+      where: {
+        userId: checkUser.user.id,
+        isDeleted: false,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 5,
+    })
+
+    if (recentProjects.length === 0) {
+      return {
+        status: 404,
+        message: 'No recent projects found',
+      }
+    }
+
+    return {
+      status: 200,
+      data: recentProjects,
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      status: 500,
+      message: 'Internal server error',
+    }
+  }
+}
