@@ -157,5 +157,11 @@ export const deleteProject = async (projectId: string) => {
       status: 200,
       data: deletedProject,
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(error)
+    return {
+      status: 500,
+      message: 'Internal server error',
+    }
+  }
 }
