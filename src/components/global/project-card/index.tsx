@@ -11,13 +11,12 @@ import { timeAgo } from '@/lib/utils'
 import AlertDialogBox from '../alert-dialog'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { recoverProject } from '@/actions/project'
+import { deleteProject, recoverProject } from '@/actions/project'
 
 type Props = {
   projectId: string
   title: string
   createdAt: string
-  src: string
   isDelete: boolean
   slideData: JsonValue
   themeName?: string
@@ -27,7 +26,6 @@ const ProjectCard = ({
   projectId,
   title,
   createdAt,
-  src,
   isDelete,
   slideData,
   themeName,
@@ -76,8 +74,8 @@ const ProjectCard = ({
         description: 'Project recovered successfully',
       })
     } catch (error) {
-      toast.error('Error', {
-        description: 'Please try again later.',
+      toast.error('Oopsie', {
+        description: 'Something went wrong. Please try again later.',
       })
     }
   }
@@ -97,20 +95,20 @@ const ProjectCard = ({
     try {
       const res = await deleteProject(projectId)
       if (res.status !== 200) {
-        toast.error('Oppsie', {
-          description: 'Failed to recover project',
+        toast.error('Oopsie', {
+          description: 'Failed to delete project',
         })
-        throw new Error('Failed to recover project')
+        return
       }
 
       setOpen(false)
       router.refresh()
       toast.success('Success', {
-        description: 'Project recovered successfully',
+        description: 'Project deleted successfully',
       })
     } catch (error) {
-      toast.error('Error', {
-        description: 'Please try again later.',
+      toast.error('Oopsie', {
+        description: 'Something went wrong. Please try again later.',
       })
     }
   }
