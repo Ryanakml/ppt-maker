@@ -22,15 +22,15 @@ type Props = {
 const RecentOpened = ({ recentProjects }: Props) => {
   const router = useRouter()
   const { setSlides } = useSlideStore()
-  const handleClick = (projectId: string, sides: JsonValue) => {
-    if (!projectId || !sides) {
+  const handleClick = (projectId: string, slides: JsonValue) => {
+    if (!projectId || !slides) {
       toast.error('Project not found', {
         description: 'Please try again later.',
       })
       return
     }
 
-    setSlides(JSON.parse(JSON.stringify(sides)))
+    setSlides(JSON.parse(JSON.stringify(slides)))
     router.push(`/presentation/${projectId}`)
   }
   return recentProjects.length > 0 ? (
