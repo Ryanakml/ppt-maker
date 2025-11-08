@@ -43,19 +43,23 @@ export const getAllProjects = async () => {
   }
 }
 
-export const getRecentProjects = async () => {
+export const getRecentProjects = async (providedUserId?: string) => {
   try {
-    const checkUser = await onAuthenticateUser()
-    if (checkUser.status !== 200 || !checkUser.user) {
-      return {
-        status: 403,
-        message: 'User not authenticated',
+    let userId = providedUserId
+    if (!userId) {
+      const checkUser = await onAuthenticateUser()
+      if (checkUser.status !== 200 || !checkUser.user) {
+        return {
+          status: 403,
+          message: 'User not authenticated',
+        }
       }
+      userId = checkUser.user.id
     }
 
     const recentProjects = await client.project.findMany({
       where: {
-        userId: checkUser.user.id,
+        userId,
         isDeleted: false,
       },
       orderBy: {
@@ -82,4 +86,76 @@ export const getRecentProjects = async () => {
       message: 'Internal server error',
     }
   }
+}
+
+export const recoverProject = async (projectId: string) => {
+  try {
+    const checkUser = await onAuthenticateUser()
+    if (checkUser.status !== 200 || !checkUser.user) {
+      return {
+        status: 403,
+        message: 'User not authenticated',
+      }
+    }
+
+    const updatedProject = await client.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        isDeleted: false,
+      },
+    })
+
+    if (!updatedProject) {
+      return {
+        status: 500,
+        message: 'Failed to recover project',
+      }
+    }
+
+    return {
+      status: 200,
+      data: updatedProject,
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      status: 500,
+      message: 'Internal server error',
+    }
+  }
+}
+
+export const deleteProject = async (projectId: string) => {
+  try {
+    const checkUser = await onAuthenticateUser()
+    if (checkUser.status !== 200 || !checkUser.user) {
+      return {
+        status: 403,
+        message: 'User not authenticated',
+      }
+    }
+
+    const deletedProject = await client.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    })
+
+    if (!deletedProject) {
+      return {
+        status: 500,
+        message: 'Failed to delete project',
+      }
+    }
+
+    return {
+      status: 200,
+      data: deletedProject,
+    }
+  } catch (error) {}
 }
