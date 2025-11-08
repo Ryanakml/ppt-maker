@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,21 +8,19 @@ datasource db {
 }
 
 model User {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clerkId            String   @unique
   name               String
-  email              String   @unique
-  profileImage       String?
-  subscription       Boolean? @default(false)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  email              String    @unique
+  clerkId            String    @unique
+  createdAt          DateTime  @default(now())
   lemonSqueezyApiKey String?
+  profileImage       String?
   storeId            String?
+  subscription       Boolean?  @default(false)
+  updatedAt          DateTime  @updatedAt
   webhookSecret      String?
-
-  // Relations
-  ownedProjects     Project[] @relation("OwnedProjects")
-  purchasedProjects Project[] @relation("PurchasedProjects")
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownedProjects      Project[] @relation("OwnedProjects")
+  purchasedProjects  Project[] @relation("PurchasedProjects")
 }
 
 model Project {
@@ -44,8 +36,6 @@ model Project {
   variantId  String?
   thumbnail  String?
   themeName  String   @default("light")
-
-  // Relations
-  user       User   @relation("OwnedProjects", fields: [userId], references: [id])
-  purchasers User[] @relation("PurchasedProjects")
+  user       User     @relation("OwnedProjects", fields: [userId], references: [id])
+  purchasers User[]   @relation("PurchasedProjects")
 }
