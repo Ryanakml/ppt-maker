@@ -8,6 +8,7 @@ import { useSlideStore } from '@/store/useSlideStore'
 import { useRouter } from 'next/navigation'
 import ThumbnailPreview from './thumbnail-preview'
 import { timeAgo } from '@/lib/utils'
+import AlertDialogBox from '../alert-dialog'
 
 type Props = {
   projectId: string

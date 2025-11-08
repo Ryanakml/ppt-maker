@@ -1,4 +1,7 @@
 import { getAllProjects } from '@/actions/project'
+import NotFound from '@/components/global/not-found'
+import ProjectCard from '@/components/global/project-card'
+import Projects from '@/components/global/projects'
 import React from 'react'
 
 export default async function DashboardPage() {
@@ -10,7 +13,7 @@ export default async function DashboardPage() {
       sm:flex-row sm:justify-between sm:items-center"
       >
         <div className="flex flex-col items-start">
-          <h1 className="text-2xl font-semibold dark:text-primary backdrop-blur-lg">
+          <h1 className="text-2xl font-semibold dark:text-primary backdrop-blur-lg mt-2">
             Projects
           </h1>
           <p className="text-base font-normal dark:text-secondary">
@@ -18,6 +21,14 @@ export default async function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* Project */}
+      <ProjectCard />
+      {allproject.data && allproject.data.length > 0 ? (
+        <Projects projects={allproject.data} />
+      ) : (
+        <NotFound />
+      )}
     </div>
   )
 }

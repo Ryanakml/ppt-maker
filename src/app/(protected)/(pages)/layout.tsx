@@ -8,6 +8,7 @@ import AppSidebar from '@/components/global/app-sidebar/index'
 import { redirect } from 'next/navigation'
 import React from 'react'
 import { getRecentProjects } from '@/actions/project'
+import UpperInfoBar from '@/components/global/upper-info-bar'
 
 type Props = {
   children: React.ReactNode
@@ -23,9 +24,14 @@ const Layout = async ({ children }: Props) => {
 
   return (
     <SidebarProvider>
-      <AppSidebar recentProjects={[]} user={checkUser.user} />
-      <SidebarRail />
-      <SidebarInset className="flex-1">{children}</SidebarInset>
+      <AppSidebar
+        user={checkUser.user}
+        recentProjects={recentProjects.data || []}
+      />
+      <SidebarInset>
+        <UpperInfoBar user={checkUser.user} />
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   )
 }
