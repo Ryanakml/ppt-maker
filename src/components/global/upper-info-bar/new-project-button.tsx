@@ -18,7 +18,7 @@ const NewProjectButton = ({ user }: Props) => {
         size={'lg'}
         className="rounded-lg font-semibold"
         disabled={!user.subscription}
-        onClick={() => router.push('/new-project')}
+        onClick={() => router.push('/create-page')}
       >
         <Plus />
         New Project
