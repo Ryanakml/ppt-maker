@@ -1,6 +1,6 @@
 // types.ts
 
-// Definisikan type dulu
+// type definition for content types
 export type ContentType =
   | 'column'
   | 'resizable-column'
@@ -30,7 +30,7 @@ export type ContentType =
   | 'customButton'
   | 'tableOfContents'
 
-// Lalu definisikan ContentItem
+// content item interface
 export interface ContentItem {
   id: string
   type: ContentType
@@ -54,7 +54,7 @@ export interface ContentItem {
   isTransparent?: boolean
 }
 
-// Baru interface Slide
+// slide interface
 export interface Slide {
   id: string
   slideName: string
@@ -62,4 +62,18 @@ export interface Slide {
   content: ContentItem
   slideOrder: number
   className?: string
+}
+
+// theme interface
+export interface Theme {
+  name: string
+  fontFamily: string
+  fontcolor: string
+  backgroundColor: string
+  slideBackgroundColor: string
+  accentColor: string
+  gradientBackground?: string
+  sidebarColor?: string
+  navColor?: string
+  type: 'light' | 'dark'
 }
