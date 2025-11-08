@@ -110,6 +110,7 @@ suppressHydrationWarning
 
 ```bash
 bun add @clerk/nextjs --force
+bun add @clerk/themes
 ```
 
 then add the middleware.ts for the middle provider, the main function is to protect some route, need to login first. so the user can access it. but we add a little logic for conditional, if the url is public, then dont force to login first. in detail the route /sign-in and /sign-up is public. end then if the route is not public and user not auth, it will redirect into public route, which is /sign-in or /sign-up
