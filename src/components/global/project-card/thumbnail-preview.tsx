@@ -19,7 +19,7 @@ const ThumbnailPreview = ({ slide, theme }: Props) => {
         fontFamily: theme.fontFamily,
         color: theme.accentColor,
         backgroundColor: theme.backgroundColor,
-        backgroundImage: theme.gtradientBackground,
+        backgroundImage: theme.gradientBackground,
       }}
     >
       {slide ? (
