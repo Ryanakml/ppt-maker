@@ -10,10 +10,9 @@ import NewProjectButton from './new-project-button'
 
 type Props = {
   user: User
-  children: React.ReactNode
 }
 
-const UpperInfoBar = ({ user, children }: Props) => {
+const UpperInfoBar = ({ user }: Props) => {
   return (
     <div className="sticky top-0 z-[10] border-b bg-background">
       <header className="flex items-center justify-between gap-4 p-4">
@@ -35,7 +34,6 @@ const UpperInfoBar = ({ user, children }: Props) => {
           <NewProjectButton user={user} />
         </div>
       </header>
-      <div className="p-4 pt-0">{children}</div>
     </div>
   )
 }
