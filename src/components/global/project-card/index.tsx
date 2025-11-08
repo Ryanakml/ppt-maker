@@ -11,6 +11,7 @@ import { timeAgo } from '@/lib/utils'
 import AlertDialogBox from '../alert-dialog'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { recoverProject } from '@/actions/project'
 
 type Props = {
   projectId: string
@@ -48,7 +49,7 @@ const ProjectCard = ({
 
   const theme = themes.find((theme) => theme.name === themeName) || themes[0]
 
-  const handleRecover = () => {
+  const handleRecover = async () => {
     setLoading(true)
 
     if (!projectId) {
@@ -62,8 +63,56 @@ const ProjectCard = ({
 
     try {
       const res = await recoverProject(projectId)
+      if (res.status !== 200) {
+        toast.error('Oppsie', {
+          description: 'Failed to recover project',
+        })
+        throw new Error('Failed to recover project')
+      }
 
-    } catch (error) {}
+      setOpen(false)
+      router.refresh()
+      toast.success('Success', {
+        description: 'Project recovered successfully',
+      })
+    } catch (error) {
+      toast.error('Error', {
+        description: 'Please try again later.',
+      })
+    }
+  }
+
+  const handleDelete = async () => {
+    setLoading(true)
+
+    if (!projectId) {
+      toast.error('Project not found', {
+        description: 'Please try again later.',
+      })
+      setLoading(false)
+      setOpen(false)
+      return
+    }
+
+    try {
+      const res = await deleteProject(projectId)
+      if (res.status !== 200) {
+        toast.error('Oppsie', {
+          description: 'Failed to recover project',
+        })
+        throw new Error('Failed to recover project')
+      }
+
+      setOpen(false)
+      router.refresh()
+      toast.success('Success', {
+        description: 'Project recovered successfully',
+      })
+    } catch (error) {
+      toast.error('Error', {
+        description: 'Please try again later.',
+      })
+    }
   }
 
   return (
@@ -94,28 +143,44 @@ const ProjectCard = ({
             >
               {timeAgo(createdAt)}
             </p>
-            {/* {isDelete ? ( */}
-            <AlertDialogBox
-              description="This will recover your project and restore your data."
-              className="bg-green-500 text-white dark:bg-green-600 hover:bg-green-600 hover:dark:bg-green-700"
-              loading={loading}
-              open={open}
-              onConfirm={handleRecover}
-              confirmLabel="Recover"
-              handleOpen={(nextOpen) => setOpen(nextOpen)}
-            >
-              <Button
-                size="sm"
-                variant="ghost"
-                className="bg-background-80 dark:hover:bg-background-90"
-                disabled={loading}
+            {isDelete ? (
+              <AlertDialogBox
+                description="This will recover your project and restore your data."
+                className="bg-green-500 text-white dark:bg-green-600 hover:bg-green-600 hover:dark:bg-green-700"
+                loading={loading}
+                open={open}
+                onConfirm={handleRecover}
+                confirmLabel="Recover"
+                handleOpen={(nextOpen) => setOpen(nextOpen)}
               >
-                Recover
-              </Button>
-            </AlertDialogBox>
-            {/* ) : (
-              ''
-            )} */}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="bg-background-80 dark:hover:bg-background-90"
+                  disabled={loading}
+                >
+                  Recover
+                </Button>
+              </AlertDialogBox>
+            ) : (
+              <AlertDialogBox
+                description="This will delete your project permanently. This action cannot be undone."
+                className="bg-red-500 text-white dark:bg-red-600 hover:bg-red-600 hover:dark:bg-red-700"
+                onConfirm={handleDelete}
+                loading={loading}
+                open={open}
+                handleOpen={() => setOpen(!open)}
+              >
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="bg-background-80 dark:hover:bg-background-90"
+                  disabled={loading}
+                >
+                  Delete
+                </Button>
+              </AlertDialogBox>
+            )}
           </div>
         </div>
       </div>
