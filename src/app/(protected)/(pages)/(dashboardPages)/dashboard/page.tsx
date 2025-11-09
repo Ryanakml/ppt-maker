@@ -21,7 +21,6 @@ export default async function DashboardPage() {
           </p>
         </div>
       </div>
-      <ProjectCard />
       {allproject.data && allproject.data.length > 0 ? (
         <Projects projects={allproject.data} />
       ) : (
