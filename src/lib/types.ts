@@ -77,3 +77,9 @@ export interface Theme {
   navColor?: string
   type: 'light' | 'dark'
 }
+
+export interface OutlineCard {
+  title: string
+  id: string
+  order: string
+}
