@@ -2,6 +2,7 @@ import { OutlineCard } from '@/lib/types'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Card from './Card'
+import AddCardButton from './AddCardButton'
 
 type Props = {
   outlines: OutlineCard[] | []
@@ -36,6 +37,9 @@ const CardList = ({
   const [dragOverItemIndex, setDragOverItemIndex] = React.useState<
     number | null
   >(null)
+
+  const dragOffsetY = React.useRef<number>(0)
+
   const onDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     if (!draggedItem) return
@@ -50,6 +54,28 @@ const CardList = ({
     } else {
       setDragOverItemIndex(index + 1)
     }
+  }
+
+  const onAddCard = (index?: number) => {
+    const newCard: OutlineCard = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: editText || 'New Section',
+      order: (index !== undefined ? index + 1 : outlines.length) + 1,
+    }
+
+    const updatedCards =
+      index !== undefined
+        ? [
+            ...outlines.slice(0, index + 1),
+            newCard,
+            ...outlines
+              .slice(index + 1)
+              .map((card) => ({ ...card, order: card.order + 1 })),
+          ]
+        : [...outlines, newCard]
+
+    addMultipleOutlines(updatedCards)
+    setEditText('')
   }
 
   const onDrop = (e: React.DragEvent) => {
@@ -77,7 +103,7 @@ const CardList = ({
     addMultipleOutlines(
       updatedCard.map((card, index) => ({
         ...card,
-        order: String(index + 1),
+        order: index + 1,
       }))
     )
 
@@ -92,7 +118,8 @@ const CardList = ({
       )
     )
 
-    editingCard && setEditingCard(null)
+    setEditingCard(null)
+    setEditingCard(null)
     setEditText('')
   }
 
@@ -100,14 +127,78 @@ const CardList = ({
     addMultipleOutlines(
       outlines
         .filter((card) => card.id !== id)
-        .map((card, index) => ({ ...card, order: String(index + 1) }))
+        .map((card, index) => ({ ...card, order: index + 1 }))
     )
   }
 
   const onDragStart = (e: React.DragEvent, card: OutlineCard) => {
     setDraggedItem(card)
     e.dataTransfer.effectAllowed = 'move'
-    
+
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+
+    dragOffsetY.current = e.clientY - rect.top
+
+    const draggedEl = e.currentTarget.cloneNode(true) as HTMLElement
+
+    draggedEl.style.position = 'absolute'
+    draggedEl.style.top = '-9999px'
+    draggedEl.style.opacity = '0.8'
+    draggedEl.style.width = `${(e.currentTarget as HTMLElement).offsetWidth}px`
+    document.body.appendChild(draggedEl)
+    e.dataTransfer.setDragImage(draggedEl, 0, dragOffsetY.current)
+
+    setTimeout(() => {
+      setDragOverItemIndex(outlines.findIndex((c) => c.id === card.id))
+      document.body.removeChild(draggedEl)
+    }, 0)
+  }
+
+  const onDragEnd = () => {
+    setDraggedItem(null)
+    setDragOverItemIndex(null)
+  }
+
+  const getDragOverStyles = (cardIndex: number) => {
+    if (dragOverItemIndex === null || draggedItem === null) return {}
+    if (cardIndex === dragOverItemIndex) {
+      return {
+        borderTop: '2px solid #000',
+        marginTop: '8px',
+        transition: 'margin 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
+      }
+    } else if (cardIndex === dragOverItemIndex - 1) {
+      return {
+        borderBottom: '2px solid #000',
+        marginBottom: '8px',
+        transition: 'margin 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
+      }
+    }
+
+    return {}
+  }
+
+  const renderDropIndicator = (position: number) => {
+    if (
+      draggedItem === null ||
+      dragOverItemIndex === null ||
+      dragOverItemIndex !== position
+    ) {
+      return null
+    }
+
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0, scaleX: 0.8 }}
+        animate={{ opacity: 1, scaleX: 1 }}
+        exit={{ opacity: 0, scaleX: 0.8 }}
+        transition={{ duration: 0.15 }}
+        className="px-1"
+      >
+        <div className="h-[3px] rounded-full bg-primary" />
+      </motion.div>
+    )
   }
 
   return (
@@ -117,7 +208,7 @@ const CardList = ({
       onDragOver={(e) => {
         e.preventDefault()
         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        if (outlines.length === 0 || e.clientY < rect.bottom - 20) {
+        if (outlines.length === 0 || e.clientY > rect.bottom - 20) {
           onDragOver(e, outlines.length)
         }
       }}
@@ -126,9 +217,10 @@ const CardList = ({
         onDrop(e)
       }}
     >
-      <AnimatePresence>
+      <AnimatePresence initial={false} mode="popLayout">
         {outlines.map((card, index) => (
-          <React.Fragment key={card.id}>
+          <motion.div key={card.id} layout className="space-y-1">
+            {renderDropIndicator(index)}
             <Card
               onDragOver={(e) => onDragOver(e, index)}
               card={card}
@@ -149,16 +241,12 @@ const CardList = ({
                 onDragStart: (e) => onDragStart(e, card),
                 onDragEnd: () => onDragEnd(),
               }}
-              dragOverStyles={
-                dragOverItemIndex === index
-                  ? { borderTop: '2px solid #f55c7a' }
-                  : dragOverItemIndex === index + 1
-                    ? { borderBottom: '2px solid #f55c7a' }
-                    : {}
-              }
+              dragOverStyles={getDragOverStyles(index)}
             />
-          </React.Fragment>
+            <AddCardButton onAddCard={() => onAddCard(index)} />
+          </motion.div>
         ))}
+        {renderDropIndicator(outlines.length)}
       </AnimatePresence>
     </motion.div>
   )
