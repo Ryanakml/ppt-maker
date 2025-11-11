@@ -5,6 +5,7 @@ import React from 'react'
 import usePromptStore from '@/store/usePromptStore'
 import CreatePage from './CreatePage/CreatePage'
 import CreateAI from './GenerateAi/CreativeAI'
+import ScratchPage from './Scratch/ScratchPage'
 
 type Props = {}
 
@@ -33,7 +34,7 @@ const RenderPage = (props: Props) => {
       case 'creative-ai':
         return <CreateAI onBack={handleBack} />
       case 'creative-scratch':
-        return <div>Step 3 Content</div>
+        return <ScratchPage onBack={handleBack} />
       default:
         return null
     }
