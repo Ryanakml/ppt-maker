@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   itemVariants,
@@ -17,6 +17,9 @@ type Props = {
 
 const CreatePage = ({ onSelectOption }: Props) => {
   const { prompts, setPage } = usePromptStore()
+  // useEffect(() => {
+  //   setPage('create')
+  // }, [setPage])
   return (
     <motion.div
       variants={containerVariants}
@@ -25,7 +28,7 @@ const CreatePage = ({ onSelectOption }: Props) => {
       className="space-y-10"
     >
       <motion.div variants={itemVariants} className="space-y-3 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+        <h1 className="text-l font-bold tracking-tight text-white sm:text-5xl">
           How would you like to get started?
         </h1>
         <p className="text-base text-white/60">
@@ -100,7 +103,7 @@ const CreatePage = ({ onSelectOption }: Props) => {
         ))}
       </motion.div>
 
-      <RecentPrompts />
+      {prompts.length > 0 && <RecentPrompts />}
     </motion.div>
   )
 }
