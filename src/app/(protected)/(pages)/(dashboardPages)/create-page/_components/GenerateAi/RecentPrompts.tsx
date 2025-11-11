@@ -24,10 +24,10 @@ const RecentPrompts = (props: Props) => {
     }
   }
   return (
-    <motion.div variants={containerVariants} className="space-y-4 mt-20">
+    <motion.div variants={containerVariants} className="space-y-2 mt-32">
       <motion.h2
         variants={itemVariants}
-        className="text-4xl font-semibold text-center"
+        className="text-4xl font-semibold text-center mt-40 mb-10"
       >
         Recent Prompts
       </motion.h2>
