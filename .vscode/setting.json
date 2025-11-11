@@ -1,0 +1,52 @@
+{
+  "files.autoSave": "onFocusChange",
+  "editor.smoothScrolling": false,
+  "editor.cursorBlinking": "solid",
+  "editor.renderWhitespace": "none",
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": false,
+  "workbench.tree.indent": 10,
+
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.suggest.autoImports": false,
+  "javascript.suggest.autoImports": false,
+  "typescript.validate.enable": true,
+  "javascript.validate.enable": false,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.requireConfig": true,
+  "eslint.format.enable": false,
+  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
+
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/out/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/build": true
+  },
+
+  "gitlens.showWelcomeOnInstall": false,
+  "gitlens.showWhatsNewAfterUpgrades": false,
+  "git.autofetch": false,
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "html",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+
+  "window.commandCenter": false,
+  "workbench.startupEditor": "none",
+  "telemetry.telemetryLevel": "off",
+  "update.mode": "manual",
+  "terminal.integrated.gpuAcceleration": "off"
+}
