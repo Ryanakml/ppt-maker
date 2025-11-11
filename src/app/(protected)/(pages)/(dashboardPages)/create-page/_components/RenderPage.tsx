@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 import usePromptStore from '@/store/usePromptStore'
 import CreatePage from './CreatePage/CreatePage'
+import CreateAI from './GenerateAi/CreativeAI'
 
 type Props = {}
 
@@ -11,16 +12,30 @@ const RenderPage = (props: Props) => {
   const router = useRouter()
   const { page, setPage } = usePromptStore()
 
+  const handleBack = () => {
+    setPage('create')
+  }
+
+  const handleSelectOption = (option: string) => {
+    if (option === 'template') {
+      router.push('/templates')
+    } else if (option === 'create-scratch') {
+      setPage('creative-scratch')
+    } else {
+      setPage('creative-ai')
+    }
+  }
+
   const renderStep = () => {
     switch (page) {
       case 'create':
-        return <CreatePage onSelectOption={() => {}} />
+        return <CreatePage onSelectOption={handleSelectOption} />
+      case 'creative-ai':
+        return <CreateAI onBack={handleBack} />
       case 'creative-scratch':
         return <div>Step 3 Content</div>
-      case 'creative-ai':
-        return <div>Step 2 Content</div>
       default:
-        return <div>Default Step Content</div>
+        return null
     }
   }
 
