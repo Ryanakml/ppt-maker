@@ -1,3 +1,5 @@
+'use client'
+
 import { OutlineCard } from '@/lib/types'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
