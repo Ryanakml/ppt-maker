@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSlideStore } from '@/store/useSlideStore'
@@ -48,21 +50,34 @@ const ThemePreview = (props: Props) => {
   const leftCardContent = (
     <div className="space-y-4">
       <div
-        className="rounded-xl p-4"
-        style={{ background: activeTheme.accentColor + '10' }}
+        className="rounded-xl p-8"
+        style={{
+          backgroundColor: activeTheme.slideBackgroundColor,
+          backgroundImage: activeTheme.gradientBackground,
+        }}
       >
-        <h3 className="text-xl font-semibold mb-4">Quick Start Guide</h3>
-        <ol className="list-decimal list-inside space-y-2 text-sm">
+        <h3
+          className="text-xl font-semibold mb-4"
+          style={{
+            color: activeTheme.fontcolor,
+          }}
+        >
+          Quick Start Guide
+        </h3>
+        <ol
+          className="list-decimal list-inside space-y-2 text-sm"
+          style={{ color: activeTheme.fontcolor }}
+        >
           <li>Choose a template</li>
           <li>Customize your slides</li>
           <li>Add your content</li>
           <li>Preview and publish</li>
         </ol>
         <Button
-          className="w-full h-12 text-lg font-medium"
+          className="w-full h-12 text-lg font-medium mt-4"
           style={{
             backgroundColor: activeTheme.accentColor,
-            color: activeTheme.accentColor,
+            color: '#ffffff',
           }}
         >
           Get Started
@@ -76,17 +91,17 @@ const ThemePreview = (props: Props) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
           className="rounded-xl p-6"
-          style={{ backgroundColor: activeTheme.accentColor + '10' }}
+          style={{ backgroundColor: activeTheme.slideBackgroundColor }}
         >
-          <p style={{ color: activeTheme.accentColor }}>
+          <p style={{ color: activeTheme.fontcolor }}>
             This is a preview of the theme: {activeTheme.name}
           </p>
         </div>
         <div
           className="rounded-xl p-6"
-          style={{ backgroundColor: activeTheme.accentColor + '10' }}
+          style={{ backgroundColor: activeTheme.slideBackgroundColor }}
         >
-          <p style={{ color: activeTheme.accentColor }}>
+          <p style={{ color: activeTheme.fontcolor }}>
             You can change the theme: {activeTheme.name} at any time
           </p>
         </div>
@@ -96,7 +111,7 @@ const ThemePreview = (props: Props) => {
           className="w-full h-12 text-lg font-medium"
           style={{
             backgroundColor: activeTheme.accentColor,
-            color: activeTheme.accentColor,
+            color: '#ffffff',
           }}
         >
           Primary Button
@@ -106,7 +121,7 @@ const ThemePreview = (props: Props) => {
           className="w-full h-12 text-lg font-medium"
           style={{
             backgroundColor: activeTheme.accentColor,
-            color: activeTheme.accentColor,
+            color: activeTheme.fontcolor,
           }}
         >
           Secondary Button
@@ -119,17 +134,17 @@ const ThemePreview = (props: Props) => {
     <div className="space-y-4">
       <div
         className="rounded-xl p-6"
-        style={{ backgroundColor: activeTheme.accentColor + '10' }}
+        style={{ backgroundColor: activeTheme.slideBackgroundColor }}
       >
         <h3
           className="text-xl font-semibold mb-4"
-          style={{ color: activeTheme.accentColor }}
+          style={{ color: activeTheme.fontcolor }}
         >
           Theme Features
         </h3>
         <ul
           className="list-disc list-inside space-y-2"
-          style={{ color: activeTheme.accentColor }}
+          style={{ color: activeTheme.fontcolor }}
         >
           <li>Customizable layouts</li>
           <li>Drag-and-drop interface</li>
@@ -141,7 +156,7 @@ const ThemePreview = (props: Props) => {
         className="w-full h-12 text-lg font-medium"
         style={{
           borderColor: activeTheme.accentColor,
-          color: activeTheme.accentColor,
+          color: activeTheme.fontcolor,
         }}
       >
         Explore Features
@@ -154,7 +169,7 @@ const ThemePreview = (props: Props) => {
       className="h-screen w-full flex"
       style={{
         backgroundColor: activeTheme.backgroundColor,
-        color: activeTheme.accentColor,
+        color: activeTheme.fontcolor,
         fontFamily: activeTheme.fontFamily,
       }}
     >
@@ -166,7 +181,7 @@ const ThemePreview = (props: Props) => {
             size="lg"
             style={{
               backgroundColor: activeTheme.accentColor + '10',
-              color: activeTheme.accentColor,
+              color: activeTheme.fontcolor,
               borderColor: activeTheme.accentColor + '20',
             }}
             onClick={() => router.push('/create-page')}
@@ -174,12 +189,28 @@ const ThemePreview = (props: Props) => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <div className="w-full flex justify-center items-center relative flex-grow">
+          <div className="w-full flex justify-center gap-8 items-center flex-grow relative">
             <ThemeCard
               title="Quick Start"
               description="Get started with your presentation quickly"
               content={leftCardContent}
               variant="left"
+              theme={activeTheme}
+              controls={controls}
+            />
+            <ThemeCard
+              title="Main Preview"
+              description="See your theme in action"
+              content={mainCardContent}
+              variant="main"
+              theme={activeTheme}
+              controls={controls}
+            />
+            <ThemeCard
+              title="Features"
+              description="Explore what this theme offers"
+              content={rightCardContent}
+              variant="right"
               theme={activeTheme}
               controls={controls}
             />

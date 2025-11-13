@@ -1,7 +1,10 @@
+'use client'
+
 import React from 'react'
 import { Theme } from '@/lib/types'
 import { useAnimationControls, motion, Variants } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
+import Image from 'next/image'
 
 type Props = {
   title: string
@@ -75,7 +78,8 @@ const ThemeCard = ({
       variants={variants[variant]}
       className="absolute w-full max-w-3xl"
       style={{
-        zIndex: variant === 'main' ? 10 : 0,
+        zIndex: variant === 'main' ? 30 : 10,
+        transformStyle: 'preserve-3d',
       }}
     >
       <Card
@@ -86,7 +90,7 @@ const ThemeCard = ({
         }}
       >
         <div className="flex flex-col md:flex-row">
-          <CardContent className="p-8 flex-1 space-y-6">
+          <CardContent className="flex-1 p-8 space-y-6">
             <div className="space-y-3">
               <h2
                 className="text-3xl font-bold tracking-tight"
@@ -101,7 +105,17 @@ const ThemeCard = ({
                 {description}
               </p>
             </div>
+            {content}
           </CardContent>
+          <div className="relative w-full md:w-1/2 h-80 md:h-auto overflow-hidden rounded-r-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1605012551487-3e3fe4d02ae2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1287"
+              alt="White printer paper with drawing"
+              width={800}
+              height={600}
+              className="transition-transform duration-500 hover:scale-105"
+            />
+          </div>
         </div>
       </Card>
     </motion.div>
