@@ -9,14 +9,14 @@ import { Theme } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import ThemeCard from './ThemeCard'
+import ThemePicker from './ThemePicker'
+import { themes } from '@/lib/constants'
 
-type Props = {}
-
-const ThemePreview = (props: Props) => {
-  const params = useParams()
+const ThemePreview = () => {
+  const params = useParams<{ presentationId: string }>()
   const router = useRouter()
   const controls = useAnimation()
-  const { project, currentTheme } = useSlideStore()
+  const { project, currentTheme, setCurrentTheme } = useSlideStore()
   const [selectedTheme, setSelectedTheme] = React.useState<Theme | null>(
     currentTheme
   )
@@ -48,6 +48,43 @@ const ThemePreview = (props: Props) => {
   }
 
   const leftCardContent = (
+    <div className="space-y-6">
+      <div
+        className="rounded-xl p-6"
+        style={{ backgroundColor: activeTheme.slideBackgroundColor }}
+      >
+        <p style={{ color: activeTheme.fontcolor }}>
+          This is a preview of the theme: {activeTheme.name}
+        </p>
+        <p style={{ color: activeTheme.fontcolor }}>
+          You can change the theme: {activeTheme.name} at any time
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-4">
+        <Button
+          className="w-full h-12 text-lg font-medium"
+          style={{
+            backgroundColor: activeTheme.accentColor,
+            color: '#ffffff',
+          }}
+        >
+          Primary Button
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full h-12 text-lg font-medium"
+          style={{
+            backgroundColor: activeTheme.accentColor,
+            color: activeTheme.fontcolor,
+          }}
+        >
+          Secondary Button
+        </Button>
+      </div>
+    </div>
+  )
+
+  const mainCardContent = (
     <div className="space-y-4">
       <div
         className="rounded-xl p-8"
@@ -81,50 +118,6 @@ const ThemePreview = (props: Props) => {
           }}
         >
           Get Started
-        </Button>
-      </div>
-    </div>
-  )
-
-  const mainCardContent = (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div
-          className="rounded-xl p-6"
-          style={{ backgroundColor: activeTheme.slideBackgroundColor }}
-        >
-          <p style={{ color: activeTheme.fontcolor }}>
-            This is a preview of the theme: {activeTheme.name}
-          </p>
-        </div>
-        <div
-          className="rounded-xl p-6"
-          style={{ backgroundColor: activeTheme.slideBackgroundColor }}
-        >
-          <p style={{ color: activeTheme.fontcolor }}>
-            You can change the theme: {activeTheme.name} at any time
-          </p>
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-4">
-        <Button
-          className="w-full h-12 text-lg font-medium"
-          style={{
-            backgroundColor: activeTheme.accentColor,
-            color: '#ffffff',
-          }}
-        >
-          Primary Button
-        </Button>
-        <Button
-          variant="outline"
-          className="w-full h-12 text-lg font-medium"
-          style={{
-            backgroundColor: activeTheme.accentColor,
-            color: activeTheme.fontcolor,
-          }}
-        >
-          Secondary Button
         </Button>
       </div>
     </div>
@@ -164,6 +157,11 @@ const ThemePreview = (props: Props) => {
     </div>
   )
 
+  const applyThemes = (theme: Theme) => {
+    setSelectedTheme(theme)
+    setCurrentTheme(theme)
+  }
+
   return (
     <div
       className="h-screen w-full flex"
@@ -173,8 +171,10 @@ const ThemePreview = (props: Props) => {
         fontFamily: activeTheme.fontFamily,
       }}
     >
+      {/* LEFT SIDE — PREVIEW SECTION */}
       <div className="flex-grow overflow-y-auto">
         <div className="p-12 flex flex-col items-center min-h-screen">
+          {/* Back button */}
           <Button
             variant="outline"
             className="mb-12 self-start"
@@ -189,34 +189,55 @@ const ThemePreview = (props: Props) => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <div className="w-full flex justify-center gap-8 items-center flex-grow relative">
-            <ThemeCard
-              title="Quick Start"
-              description="Get started with your presentation quickly"
-              content={leftCardContent}
-              variant="left"
-              theme={activeTheme}
-              controls={controls}
-            />
-            <ThemeCard
-              title="Main Preview"
-              description="See your theme in action"
-              content={mainCardContent}
-              variant="main"
-              theme={activeTheme}
-              controls={controls}
-            />
-            <ThemeCard
-              title="Features"
-              description="Explore what this theme offers"
-              content={rightCardContent}
-              variant="right"
-              theme={activeTheme}
-              controls={controls}
-            />
+
+          {/* 3D Cards Preview */}
+          <div
+            className="relative w-full flex items-center justify-center"
+            style={{
+              height: 'calc(100vh - 200px)',
+              perspective: '2000px',
+              perspectiveOrigin: 'center center',
+            }}
+          >
+            <div
+              className="relative"
+              style={{ width: '800px', height: '700px' }}
+            >
+              <ThemeCard
+                title="Quick Start"
+                description="Get started with your presentation quickly"
+                content={leftCardContent}
+                variant="left"
+                theme={activeTheme}
+                controls={controls}
+              />
+              <ThemeCard
+                title="Main Preview"
+                description="See your theme in action"
+                content={mainCardContent}
+                variant="main"
+                theme={activeTheme}
+                controls={controls}
+              />
+              <ThemeCard
+                title="Features"
+                description="Explore what this theme offers"
+                content={rightCardContent}
+                variant="right"
+                theme={activeTheme}
+                controls={controls}
+              />
+            </div>
           </div>
         </div>
       </div>
+
+      {/* RIGHT SIDE — THEME PICKER SIDEBAR */}
+      <ThemePicker
+        selectedTheme={selectedTheme}
+        themes={themes}
+        onThemeSelect={applyThemes}
+      />
     </div>
   )
 }
