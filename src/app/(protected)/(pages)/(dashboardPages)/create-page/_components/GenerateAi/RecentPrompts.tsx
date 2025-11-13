@@ -1,3 +1,5 @@
+'use client'
+
 import { motion } from 'framer-motion'
 import usePromptStore from '@/store/usePromptStore'
 import useCreativeAIStore from '@/store/useCreativeAIStore'
