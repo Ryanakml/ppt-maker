@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { useSlideStore } from '@/store/useSlideStore'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -10,6 +12,10 @@ import { useEffect, useRef } from 'react'
 import { Slide } from '@/lib/types'
 import { useDrag } from 'react-dnd'
 import ContentRendered from './MasterRecursiveComponent'
+import { Popover, PopoverContent } from '@/components/ui/popover'
+import { PopoverTrigger } from '@radix-ui/react-popover'
+import { EllipsisVertical, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface DropZoneProps {
   index: number
@@ -92,6 +98,16 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
   const { currentSlide, setCurrentSlide, currentTheme, updateContentItem } =
     useSlideStore()
 
+  const handleOnContentChange = (
+    contentId: string,
+    newContent: string | string[] | string[][]
+  ) => {
+    console.log('Updating content for slide:', slide, contentId, newContent)
+    if (isEditable) {
+      updateContentItem(slide.id, contentId, newContent)
+    }
+  }
+
   return (
     <div
       ref={ref}
@@ -109,8 +125,32 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
       onClick={() => setCurrentSlide(index)}
     >
       <div className="h-full w-full flex-grow overflow-hidden">
-        <ContentRendered />
+        <ContentRendered
+          isEditable={isEditable}
+          content={slide.content}
+          slideId={slide.id}
+          isPreview={false}
+          onContentChange={handleOnContentChange}
+        />
       </div>
+      {isEditable && (
+        <Popover>
+          <PopoverTrigger asChild className="absolute top-2 left-2">
+            <Button size={'sm'} variant={'outline'}>
+              <EllipsisVertical className="w-5 h-5" />
+              <span className="sr-only">Slide Options</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-fit p-0">
+            <div className="flex space-y-2">
+              <Button variant={'ghost'} onClick={() => handleDelete(slide.id)}>
+                <Trash2 className="w-4 h-4 text-red-500" />
+                <span className="sr-only">Delete Slide</span>
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
     </div>
   )
 }
@@ -165,6 +205,13 @@ const Editor = ({ isEditable }: Props) => {
     }
   }
 
+  const handleDelete = (id: string) => {
+    if (isEditable) {
+      console.log('Deleting slide with id:', id)
+      removeSlide(id)
+    }
+  }
+
   useEffect(() => {
     if (slideRefs.current[currentSlide]) {
       slideRefs.current[currentSlide].scrollIntoView({
@@ -173,6 +220,12 @@ const Editor = ({ isEditable }: Props) => {
       })
     }
   }, [currentSlide])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsLoading(false)
+    }
+  }, [])
 
   return (
     <div className="flex-1 flex flex-col h-full max-w-3xl mx-auto px-4 mb-20">
@@ -193,7 +246,13 @@ const Editor = ({ isEditable }: Props) => {
 
             {orderedSlides.map((slide, index) => (
               <React.Fragment key={slide.id || index}>
-                <DraggableSlide />
+                <DraggableSlide
+                  slide={slide}
+                  index={index}
+                  isEditable={isEditable}
+                  moveSlide={moveSlide}
+                  handleDelete={handleDelete}
+                />
               </React.Fragment>
             ))}
           </div>
