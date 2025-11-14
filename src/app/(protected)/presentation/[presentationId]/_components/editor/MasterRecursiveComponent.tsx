@@ -1,11 +1,19 @@
 'use client'
 
 import { ContentItem } from '@/lib/types'
-import { animate, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import React, { useCallback } from 'react'
-import { Heading1 } from '@/components/global/editor/Headings'
+import {
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Title,
+} from '@/components/global/editor/Headings'
+import { cn } from '@/lib/utils'
+import Dropzone from './Dropzone'
 
-type MasterResoinsuceComponentProps = {
+type MasterRecursiveComponentProps = {
   content: ContentItem
   onContentChange: (
     contentId: string,
@@ -14,12 +22,10 @@ type MasterResoinsuceComponentProps = {
   isPreview?: boolean
   isEditable?: boolean
   slideId: string
-  index: number
 }
 
-
-const ContentRendered: React.FC<MasterResoinsuceComponentProps> = React.memo(
-  ({ content, onContentChange, isPreview, isEditable, slideId, index }) => {
+const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
+  ({ content, onContentChange, isPreview, isEditable, slideId }) => {
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         onContentChange(content.id, e.target.value)
@@ -31,7 +37,7 @@ const ContentRendered: React.FC<MasterResoinsuceComponentProps> = React.memo(
       placeholder: content.placeholder || '',
       value: content.content as string,
       onChange: handleChange,
-      isPreview: isPreview,
+      isPreview,
     }
 
     const animationProps = {
@@ -39,16 +45,110 @@ const ContentRendered: React.FC<MasterResoinsuceComponentProps> = React.memo(
       animate: { opacity: 1, y: 0 },
       transition: { duration: 0.5 },
     }
+
     switch (content.type) {
       case 'heading1':
         return (
           <motion.div className="w-full h-full" {...animationProps}>
-            <Heading1 {...commonProps} />
+            <Heading2 {...commonProps} />
           </motion.div>
         )
+
+      case 'heading2':
+        return (
+          <motion.div className="w-full h-full" {...animationProps}>
+            <Heading3 {...commonProps} />
+          </motion.div>
+        )
+
+      case 'heading3':
+        return (
+          <motion.div className="w-full h-full" {...animationProps}>
+            <Heading4 {...commonProps} />
+          </motion.div>
+        )
+
+      case 'heading4':
+        return (
+          <motion.div className="w-full h-full" {...animationProps}>
+            <Heading4 {...commonProps} />
+          </motion.div>
+        )
+
+      case 'title':
+        return (
+          <motion.div className="w-full h-full" {...animationProps}>
+            <Title {...commonProps} />
+          </motion.div>
+        )
+
+      case 'column':
+        if (Array.isArray(content.content)) {
+          const items = content.content as ContentItem[]
+
+          return (
+            <motion.div
+              className={cn(
+                'w-full h-full flex flex-col gap-4',
+                content.className
+              )}
+              {...animationProps}
+            >
+              {items.length > 0 ? (
+                items.map((subItem, subIndex) => (
+                  <React.Fragment key={subItem.id || `item-${subIndex}`}>
+                    {isPreview &&
+                      !subItem.restrictToDrop &&
+                      subIndex === 0 &&
+                      isEditable && (
+                        <Dropzone
+                          index={0}
+                          parentId={content.id}
+                          slideId={slideId}
+                        />
+                      )}
+                    <MasterRecursiveComponent
+                      content={subItem}
+                      onContentChange={onContentChange}
+                      isPreview={isPreview}
+                      isEditable={isEditable}
+                      slideId={slideId}
+                    />
+                    {isPreview && !subItem.restrictToDrop && isEditable && (
+                      <Dropzone
+                        index={subIndex + 1}
+                        parentId={content.id}
+                        slideId={slideId}
+                      />
+                    )}
+                  </React.Fragment>
+                ))
+              ) : isEditable ? (
+                <Dropzone index={0} parentId={content.id} slideId={slideId} />
+              ) : null}
+            </motion.div>
+          )
+        }
+
+        return null
+
       default:
+        return null
     }
   }
 )
 
-export default ContentRendered
+const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
+  React.memo((props) => {
+    if (props.isPreview) {
+      return <ContentRenderer {...props} />
+    }
+
+    return (
+      <React.Fragment>
+        <ContentRenderer {...props} />
+      </React.Fragment>
+    )
+  })
+
+export default MasterRecursiveComponent
