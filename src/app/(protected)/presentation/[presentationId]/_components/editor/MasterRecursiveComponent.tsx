@@ -40,6 +40,8 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       isPreview,
     }
 
+    console.log('RENDER:', content.type, content)
+
     const animationProps = {
       initial: { opacity: 0, y: 10 },
       animate: { opacity: 1, y: 0 },
@@ -78,7 +80,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       case 'title':
         return (
           <motion.div className="w-full h-full" {...animationProps}>
-            <Title {...commonProps} />
+            <Title {...commonProps} style={{ minHeight: '2.5rem' }} />
           </motion.div>
         )
 
